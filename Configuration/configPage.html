@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Authentik Auth</title>
+</head>
+<body>
+    <div id="AuthentikAuthConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-checkbox">
+        <div data-role="content">
+            <div class="content-primary">
+                <form id="AuthentikAuthConfigForm">
+                    <div class="verticalSection">
+                        <h2>Authentik SSO</h2>
+                        <p>
+                            Login URL once configured: <code>/Authentik/Start</code><br />
+                            Point a login button or bookmark at that path on your Jellyfin domain.
+                        </p>
+
+                        <div class="inputContainer">
+                            <label class="inputLabel" for="aa_AuthentikBaseUrl">Authentik base URL</label>
+                            <input is="emby-input" type="text" id="aa_AuthentikBaseUrl" placeholder="https://authentik.example.com" />
+                            <div class="fieldDescription">No trailing slash.</div>
+                        </div>
+
+                        <div class="inputContainer">
+                            <label class="inputLabel" for="aa_ApplicationSlug">Application slug</label>
+                            <input is="emby-input" type="text" id="aa_ApplicationSlug" placeholder="jellyfin" />
+                        </div>
+
+                        <div class="inputContainer">
+                            <label class="inputLabel" for="aa_ClientId">Client ID</label>
+                            <input is="emby-input" type="text" id="aa_ClientId" />
+                        </div>
+
+                        <div class="inputContainer">
+                            <label class="inputLabel" for="aa_ClientSecret">Client Secret</label>
+                            <input is="emby-input" type="password" id="aa_ClientSecret" />
+                        </div>
+
+                        <div class="inputContainer">
+                            <label class="inputLabel" for="aa_JellyfinPublicUrl">Jellyfin public URL</label>
+                            <input is="emby-input" type="text" id="aa_JellyfinPublicUrl" placeholder="https://jellyfin.example.com" />
+                            <div class="fieldDescription">
+                                The externally reachable HTTPS URL for this server. Used to build the
+                                redirect_uri explicitly, so this must exactly match (minus the path)
+                                what you register in Authentik.
+                            </div>
+                        </div>
+
+                        <div class="inputContainer">
+                            <label class="inputLabel" for="aa_AllowedGroups">Allowed groups (comma-separated)</label>
+                            <input is="emby-input" type="text" id="aa_AllowedGroups" placeholder="Home" />
+                            <div class="fieldDescription">Leave blank to allow any authenticated Authentik user.</div>
+                        </div>
+
+                        <div class="inputContainer">
+                            <label class="inputLabel" for="aa_AdminGroups">Admin groups (comma-separated)</label>
+                            <input is="emby-input" type="text" id="aa_AdminGroups" placeholder="Home" />
+                        </div>
+
+                        <label class="emby-checkbox-label">
+                            <input is="emby-checkbox" type="checkbox" id="aa_CreateUsersAutomatically" />
+                            <span>Automatically create a Jellyfin user on first sign-in</span>
+                        </label>
+
+                        <label class="emby-checkbox-label">
+                            <input is="emby-checkbox" type="checkbox" id="aa_DoNotValidateEndpoints" />
+                            <span>Skip discovery/TLS validation (debug only)</span>
+                        </label>
+
+                        <label class="emby-checkbox-label">
+                            <input is="emby-checkbox" type="checkbox" id="aa_AutoRedirectToSso" />
+                            <span>Make Authentik the default login (auto-redirect the login page)</span>
+                        </label>
+                        <div class="fieldDescription">
+                            Visit <code>/web/index.html?manual=1</code> any time to reach the normal
+                            password form instead - keep this bookmarked somewhere safe in case
+                            Authentik is ever unreachable.
+                        </div>
+
+                        <br />
+                        <button is="emby-button" type="submit" class="raised button-submit block emby-button">
+                            <span>Save</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script type="text/javascript" data-cfasync="false">
+            (function () {
+                var PluginId = "a4e1c8b2-6f3d-4b8a-9c2e-2f1d7e5a9b31";
+
+                function loadConfig(page) {
+                    Dashboard.showLoadingMsg();
+                    ApiClient.getPluginConfiguration(PluginId).then(function (config) {
+                        page.querySelector('#aa_AuthentikBaseUrl').value = config.AuthentikBaseUrl || '';
+                        page.querySelector('#aa_ApplicationSlug').value = config.ApplicationSlug || 'jellyfin';
+                        page.querySelector('#aa_ClientId').value = config.ClientId || '';
+                        page.querySelector('#aa_ClientSecret').value = config.ClientSecret || '';
+                        page.querySelector('#aa_JellyfinPublicUrl').value = config.JellyfinPublicUrl || '';
+                        page.querySelector('#aa_AllowedGroups').value = config.AllowedGroups || '';
+                        page.querySelector('#aa_AdminGroups').value = config.AdminGroups || '';
+                        page.querySelector('#aa_CreateUsersAutomatically').checked = !!config.CreateUsersAutomatically;
+                        page.querySelector('#aa_DoNotValidateEndpoints').checked = !!config.DoNotValidateEndpoints;
+                        page.querySelector('#aa_AutoRedirectToSso').checked = !!config.AutoRedirectToSso;
+                        Dashboard.hideLoadingMsg();
+                    });
+                }
+
+                // Delegated on document, capture phase, so this fires on whichever page
+                // instance actually triggered it - immune to Jellyfin's view cache leaving
+                // a stale duplicate #AuthentikAuthConfigPage/#AuthentikAuthConfigForm behind.
+                document.addEventListener('pageshow', function (e) {
+                    var page = e.target && e.target.id === 'AuthentikAuthConfigPage'
+                        ? e.target
+                        : (e.target && e.target.querySelector ? e.target.querySelector('#AuthentikAuthConfigPage') : null);
+                    if (page) {
+                        loadConfig(page);
+                    }
+                }, true);
+
+                document.addEventListener('submit', function (e) {
+                    if (!e.target || e.target.id !== 'AuthentikAuthConfigForm') {
+                        return;
+                    }
+                    e.preventDefault();
+                    var form = e.target;
+                    var page = form.closest('#AuthentikAuthConfigPage') || document;
+                    Dashboard.showLoadingMsg();
+                    ApiClient.getPluginConfiguration(PluginId).then(function (config) {
+                        config.AuthentikBaseUrl = page.querySelector('#aa_AuthentikBaseUrl').value.trim().replace(/\/+$/, '');
+                        config.ApplicationSlug = page.querySelector('#aa_ApplicationSlug').value.trim();
+                        config.ClientId = page.querySelector('#aa_ClientId').value.trim();
+                        config.ClientSecret = page.querySelector('#aa_ClientSecret').value.trim();
+                        config.JellyfinPublicUrl = page.querySelector('#aa_JellyfinPublicUrl').value.trim().replace(/\/+$/, '');
+                        config.AllowedGroups = page.querySelector('#aa_AllowedGroups').value.trim();
+                        config.AdminGroups = page.querySelector('#aa_AdminGroups').value.trim();
+                        config.CreateUsersAutomatically = page.querySelector('#aa_CreateUsersAutomatically').checked;
+                        config.DoNotValidateEndpoints = page.querySelector('#aa_DoNotValidateEndpoints').checked;
+                        config.AutoRedirectToSso = page.querySelector('#aa_AutoRedirectToSso').checked;
+                        console.log('AuthentikAuth: saving config', JSON.parse(JSON.stringify(config)));
+                        ApiClient.updatePluginConfiguration(PluginId, config).then(function (result) {
+                            Dashboard.processPluginConfigurationUpdateResult(result);
+                        });
+                    });
+                }, true);
+            })();
+        </script>
+    </div>
+</body>
+</html>

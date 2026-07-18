@@ -1,0 +1,16 @@
+{
+  "category": "Authentication",
+  "guid": "a4e1c8b2-6f3d-4b8a-9c2e-2f1d7e5a9b31",
+  "name": "Authentik Auth",
+  "description": "Sign in to Jellyfin using Authentik as an OIDC identity provider, with group-based access and admin mapping.",
+  "overview": "Minimal Authentik-only SSO plugin using authorization code + PKCE.",
+  "owner": "kinloch",
+  "category2": "General",
+  "artifacts": [
+    "AuthentikAuth.dll"
+  ],
+  "targetAbi": "10.10.0.0",
+  "framework": "net8.0",
+  "version": "1.0.0.0",
+  "changelog": "Initial release."
+}

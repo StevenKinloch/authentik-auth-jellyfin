@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>AuthentikAuth</AssemblyName>
+    <RootNamespace>Jellyfin.Plugin.AuthentikAuth</RootNamespace>
+    <!-- Match this to your installed Jellyfin server version (10.10.x) -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- These packages are published by the Jellyfin project and match server API version.
+         If the exact version below isn't found, check https://github.com/jellyfin/jellyfin
+         releases for the matching package version, or reference the DLLs directly from
+         your Jellyfin install's /usr/lib/jellyfin/bin directory instead (see README). -->
+    <PackageReference Include="Jellyfin.Controller" Version="10.10.3" />
+    <PackageReference Include="Jellyfin.Model" Version="10.10.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration/configPage.html" />
+  </ItemGroup>
+
+</Project>

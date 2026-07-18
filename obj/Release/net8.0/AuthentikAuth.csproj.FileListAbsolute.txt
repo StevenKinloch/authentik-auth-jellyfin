@@ -1,0 +1,12 @@
+/home/steven/Downloads/AuthentikAuth/bin/Release/net8.0/AuthentikAuth.deps.json
+/home/steven/Downloads/AuthentikAuth/bin/Release/net8.0/AuthentikAuth.dll
+/home/steven/Downloads/AuthentikAuth/bin/Release/net8.0/AuthentikAuth.pdb
+/home/steven/Downloads/AuthentikAuth/obj/Release/net8.0/AuthentikAuth.csproj.AssemblyReference.cache
+/home/steven/Downloads/AuthentikAuth/obj/Release/net8.0/AuthentikAuth.GeneratedMSBuildEditorConfig.editorconfig
+/home/steven/Downloads/AuthentikAuth/obj/Release/net8.0/AuthentikAuth.AssemblyInfoInputs.cache
+/home/steven/Downloads/AuthentikAuth/obj/Release/net8.0/AuthentikAuth.AssemblyInfo.cs
+/home/steven/Downloads/AuthentikAuth/obj/Release/net8.0/AuthentikAuth.csproj.CoreCompileInputs.cache
+/home/steven/Downloads/AuthentikAuth/obj/Release/net8.0/AuthentikAuth.dll
+/home/steven/Downloads/AuthentikAuth/obj/Release/net8.0/refint/AuthentikAuth.dll
+/home/steven/Downloads/AuthentikAuth/obj/Release/net8.0/AuthentikAuth.pdb
+/home/steven/Downloads/AuthentikAuth/obj/Release/net8.0/ref/AuthentikAuth.dll
